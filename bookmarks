@@ -1,0 +1,20 @@
+;;;; Emacs Bookmark Format Version 1 ;;;; -*- coding: utf-8-emacs -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("Robopill"
+ (filename . "~/Documents/programming/cxx/xxpj/Robopill/")
+ (front-context-string . "rlc\n  drwxr-xr-x")
+ (rear-context-string . "96 Feb  9 15:56 ")
+ (position . 234))
+("pj"
+ (filename . "~/Documents/programming/C/pj/")
+ (front-context-string . "AOC\n  drwxrwxrwx")
+ (rear-context-string . "96 Dec 24 04:30 ")
+ (position . 225))
+("xxpj"
+ (filename . "~/Documents/programming/cxx/xxpj/")
+ (front-context-string . "bbyssdl\n  drwxr-")
+ (rear-context-string . "96 Feb  2 15:59 ")
+ (position . 225))
+)
