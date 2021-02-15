@@ -14,12 +14,13 @@
 
 ; list the packages you want
 (setq package-list '(yafolding org-superstar all-the-icons use-package irony nim-mode 
-beacon cherry-blossom-theme vterm clues-theme company company-quickhelp dashboard 
-doom-modeline doom-themes emojify emojify-logos go-mode go-playground 
-haskell-mode helpful highlight-indent-guides magit minibuffer-complete-cycle 
-paredit paredit-everywhere projectile treemacs treemacs-all-the-icons 
-treemacs-magit rainbow-delimiters toc-org company-irony flycheck-irony company-irony-c-headers
-evil evil-lisp-state slime slime-company lispy rtags quelpa simple-mpc))
+			       beacon cherry-blossom-theme vterm clues-theme company company-quickhelp dashboard 
+			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground 
+			       haskell-mode helpful highlight-indent-guides magit minibuffer-complete-cycle 
+			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons 
+			       treemacs-magit rainbow-delimiters toc-org company-irony flycheck-irony company-irony-c-headers
+			       slime slime-company lispy rtags quelpa simple-mpc helm helm-gtags function-args clang-format
+			       clang-format+))
 
 					; list the repositories containing them
 
@@ -39,10 +40,11 @@ evil evil-lisp-state slime slime-company lispy rtags quelpa simple-mpc))
   (unless (package-installed-p package)
     (package-install package)))
 
-
+;; in line function arguments
+(fa-config-default)
 
 ;;Programming
-;
+					;
 ;;common lisp
 (slime-setup '(slime-fancy slime-quicklisp slime-asdf slime-company))
 (setq inferior-lisp-program (executable-find "sbcl"))
@@ -51,6 +53,7 @@ evil evil-lisp-state slime slime-company lispy rtags quelpa simple-mpc))
 ;;C
 ;
 (add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-common-hook #'clang-format+-mode)
 (add-hook 'c-mode-hook 'irony-mode)
 (add-hook 'objc-mode-hook 'irony-mode)
 
@@ -225,13 +228,85 @@ evil evil-lisp-state slime slime-company lispy rtags quelpa simple-mpc))
 
 (global-set-key (kbd "C-x p") 'move-to-window-line-top-bottom)
 
-;vi mode
-(add-to-list 'load-path "~/.emacs.d/evil")
-(require 'evil)
-(evil-mode 1)
-
 ;backups
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+
+(setq ido-enable-flex-matching t)
+(ido-mode 1)
+
+(require 'helm)
+(require 'helm-config)
+
+;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+(when (executable-find "curl")
+  (setq helm-google-suggest-use-curl-p t))
+
+(setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+      helm-ff-file-name-history-use-recentf t
+      helm-echo-input-in-header-line t)
+
+(defun spacemacs//helm-hide-minibuffer-maybe ()
+  "Hide minibuffer in Helm session if we use the header line as input field."
+  (when (with-helm-buffer helm-echo-input-in-header-line)
+    (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+      (overlay-put ov 'window (selected-window))
+      (overlay-put ov 'face
+                   (let ((bg-color (face-background 'default nil)))
+                     `(:background ,bg-color :foreground ,bg-color)))
+      (setq-local cursor-type nil))))
+
+
+(add-hook 'helm-minibuffer-set-up-hook
+          'spacemacs//helm-hide-minibuffer-maybe)
+
+(setq helm-autoresize-max-height 0)
+(setq helm-autoresize-min-height 20)
+(helm-autoresize-mode 1)
+
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t
+ helm-gtags-prefix-key "\C-cg"
+ helm-gtags-suggested-key-mapping t
+ )
+
+(require 'helm-gtags)
+;; Enable helm-gtags-mode
+(add-hook 'dired-mode-hook 'helm-gtags-mode)
+(add-hook 'eshell-mode-hook 'helm-gtags-mode)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+
+
+(helm-mode 1)
+
+;; clang formatting
+(require 'clang-format)
+(setq clang-format+-offset-modified-region 'buffer)
+(setq clang-format-style 'google)
+
