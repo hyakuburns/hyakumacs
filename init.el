@@ -14,7 +14,7 @@
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons 
 			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp
 			       slime slime-company lispy rtags quelpa simple-mpc helm-gtags function-args clang-format
-			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile))
+			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile rainbow-identifiers))
 					; list the repositories containing them
 
 
@@ -190,6 +190,7 @@
 ;;rainbow delimiters
 ;
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
 (show-paren-mode 1)
 
 ;;Global custom keybinds
@@ -209,6 +210,8 @@
 
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-c b") 'helm-occur)
+(global-set-key (kbd "C-x b") 'helm-mini)
+
 (helm-autoresize-mode 1)
 (setq helm-autoresize-max-height 30)
 (setq helm-M-x-fuzzy-match t)
@@ -248,6 +251,8 @@
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (projectile-mode +1)
 
+;;projectile shit
+(setq projectile-project-search-path '("~/Documents/programming/C/pj" "~/Documents/programming/cxx/xxpj/"))
 ;; clang formatting
 (require 'clang-format)
 (setq clang-format+-offset-modified-region 'buffer)
