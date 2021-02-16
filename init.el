@@ -12,7 +12,7 @@
 			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground
 			       helpful highlight-indent-guides magit minibuffer-complete-cycle 
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons 
-			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp
+			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp hl-todo
 			       slime slime-company lispy rtags quelpa simple-mpc helm-gtags function-args clang-format
 			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile rainbow-identifiers))
 					; list the repositories containing them
@@ -267,3 +267,13 @@
   [remap shell-command] 'with-editor-shell-command)
 ;function peek
 (require 'function-args)
+
+;; todo highlighting
+(global-hl-todo-mode)
+(setq hl-todo-keyword-faces
+      '(("TODO"   . "#FF0000")
+        ("FIXME"  . "#FF0000")
+        ("DEBUG"  . "#A020F0")
+        ("GOTCHA" . "#ff99d3")
+        ("STUB"   . "#1E90FF")
+	("XXX"    . "#FF4500")))
