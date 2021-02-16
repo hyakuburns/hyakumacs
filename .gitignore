@@ -7,3 +7,8 @@ quelpa/
 recentf
 transient/
 auto-save-list/
+.cache/
+.lsp-session*
+projectile*
+semanticdb/
+straight/

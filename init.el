@@ -1,37 +1,42 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-(fmakunbound 'gdb)
-(fmakunbound 'gdb-enable-debug)
 
 ;;Packages
-;; 
-(require 'package)
-
-
-
+					;
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-; list the packages you want
-(setq package-list '(yafolding org-superstar all-the-icons use-package irony nim-mode 
+;; list the packages you want
+(setq package-list '(yafolding org-superstar all-the-icons use-package lsp-mode
 			       beacon cherry-blossom-theme vterm clues-theme company company-quickhelp dashboard 
-			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground 
-			       haskell-mode helpful highlight-indent-guides magit minibuffer-complete-cycle 
+			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground
+			       helpful highlight-indent-guides magit minibuffer-complete-cycle 
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons 
-			       treemacs-magit rainbow-delimiters toc-org company-irony flycheck-irony company-irony-c-headers
-			       slime slime-company lispy rtags quelpa simple-mpc helm helm-gtags function-args clang-format
-			       clang-format+))
-
+			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp
+			       slime slime-company lispy rtags quelpa simple-mpc helm-gtags function-args clang-format
+			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile))
 					; list the repositories containing them
 
-(quelpa '(gdb-mi :fetcher git
-         :url "https://github.com/weirdNox/emacs-gdb.git"
-         :files ("*.el" "*.c" "*.h" "Makefile")))
-; activate all the packages (in particular autoloads)
-(use-package gdb-mi)
+
+;; activate all the packages (in particular autoloads)
 (package-initialize)
 
-; fetch the list of packages available 
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; helm
+(straight-use-package 'helm)
+;;fetch the list of packages available 
 (unless package-archive-contents
   (package-refresh-contents))
 
@@ -40,10 +45,12 @@
   (unless (package-installed-p package)
     (package-install package)))
 
-;; in line function arguments
+;; in line function arguments hint
+(require 'function-args)
 (fa-config-default)
 
 ;;Programming
+(global-display-line-numbers-mode)
 					;
 ;;common lisp
 (slime-setup '(slime-fancy slime-quicklisp slime-asdf slime-company))
@@ -51,47 +58,11 @@
 (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
 
 ;;C
-;
-(add-hook 'c++-mode-hook 'irony-mode)
+					;
+(require 'lsp-mode)
+(add-hook 'c-mode-hook #'lsp)
+(add-hook 'c++-mode-hook #'lsp)
 (add-hook 'c-mode-common-hook #'clang-format+-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
-
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
-
-   (require 'company-irony-c-headers)
-   ;; Load with `irony-mode` as a grouped backend
-   (eval-after-load 'company
-     '(add-to-list
-       'company-backends '(company-irony-c-headers company-irony)))
-    (eval-after-load 'company
-      '(add-to-list 'company-backends 'company-irony))
-    (eval-after-load 'flycheck
-      '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
-
-
-;;haskell
-(eval-after-load "haskell-mode"
-    '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
-
-(require 'haskell-interactive-mode)
-(require 'haskell-process)
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-(add-hook 'prog-mode-hook 'paredit-everywhere-mode)
-
-  
-(define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-(define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
-(define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
-(define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
-(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-(define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-;;(define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal)
-
-;;GDB
-(fmakunbound 'gdb)
-(fmakunbound 'gdb-enable-debug)
 
 ;;ORG MODE
 ;; 
@@ -130,22 +101,19 @@
 
 ;;Random editing stuff
 ; 
-;; To disable shortcut "jump" indicators for each section, set
-(setq dashboard-show-shortcuts nil)
-(global-display-line-numbers-mode)
-(electric-pair-mode)
-(autoload 'enable-paredit-mode "paredit"
-  "Turn on pseudo-structural editing of Lisp code."
-  t)
-(add-hook 'emacs-lisp-mode-hook       'enable-paredit-mode)
-(add-hook 'lisp-mode-hook             'enable-paredit-mode)
-(add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-(add-hook 'haskell-mode-hook           'enable-paredit-mode)
-;; 
+ ;; To disable shortcut "jump" indicators for each section, set
+ ;; (setq dashboard-show-shortcuts nil)
+ ;; (electric-pair-mode)
+(add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+(add-hook 'lisp-mode-hook 'enable-paredit-mode)
+ ;; (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+
+;; (setq electric-pair-delete-adjacent-pair nil)
 
 ;;Visual stuff
-; 
+					; 
 (load-theme 'doom-horizon t)
+(normal-erase-is-backspace-mode 1)
 ;;Dashboard
 ;; 
 (require 'dashboard)
@@ -234,49 +202,16 @@
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
-(setq ido-enable-flex-matching t)
-(ido-mode 1)
-
+;; (setq ido-enable-flex-matching t)
+;; (ido-mode 1)
 (require 'helm)
 (require 'helm-config)
 
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-unset-key (kbd "C-x c"))
-
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
-(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-
-(when (executable-find "curl")
-  (setq helm-google-suggest-use-curl-p t))
-
-(setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
-      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-      helm-ff-file-name-history-use-recentf t
-      helm-echo-input-in-header-line t)
-
-(defun spacemacs//helm-hide-minibuffer-maybe ()
-  "Hide minibuffer in Helm session if we use the header line as input field."
-  (when (with-helm-buffer helm-echo-input-in-header-line)
-    (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-      (overlay-put ov 'window (selected-window))
-      (overlay-put ov 'face
-                   (let ((bg-color (face-background 'default nil)))
-                     `(:background ,bg-color :foreground ,bg-color)))
-      (setq-local cursor-type nil))))
-
-
-(add-hook 'helm-minibuffer-set-up-hook
-          'spacemacs//helm-hide-minibuffer-maybe)
-
-(setq helm-autoresize-max-height 0)
-(setq helm-autoresize-min-height 20)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-c b") 'helm-occur)
 (helm-autoresize-mode 1)
+(setq helm-autoresize-max-height 30)
+(setq helm-M-x-fuzzy-match t)
 
 (setq
  helm-gtags-ignore-case t
@@ -305,8 +240,23 @@
 
 (helm-mode 1)
 
+(require 'projectile)
+(projectile-global-mode)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(projectile-mode +1)
+
 ;; clang formatting
 (require 'clang-format)
 (setq clang-format+-offset-modified-region 'buffer)
 (setq clang-format-style 'google)
 
+;; magit error
+(define-key (current-global-map)
+  [remap async-shell-command] 'with-editor-async-shell-command)
+(define-key (current-global-map)
+  [remap shell-command] 'with-editor-shell-command)
+;function peek
+(require 'function-args)
