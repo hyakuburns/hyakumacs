@@ -50,7 +50,7 @@
 (fa-config-default)
 
 ;;Programming
-;; 
+
 (global-display-line-numbers-mode)
 					;
 ;;common lisp
