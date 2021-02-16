@@ -63,6 +63,7 @@
 (require 'lsp-mode)
 (add-hook 'c-mode-hook #'lsp)
 (add-hook 'c++-mode-hook #'lsp)
+(setq lsp-enable-links nil)
 (add-hook 'c-mode-common-hook #'clang-format+-mode)
 
 ;;ORG MODE
@@ -191,7 +192,7 @@
 ;;rainbow delimiters
 ;
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-(add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
+;; (add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
 (show-paren-mode 1)
 
 ;;Global custom keybinds
