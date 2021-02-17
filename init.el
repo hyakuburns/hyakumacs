@@ -1,5 +1,8 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
+;; loading new files just in case lol
+;; (load-file "~/.emacs2")
+
 
 ;;Packages
 ;; im idiot
@@ -277,3 +280,7 @@
         ("GOTCHA" . "#ff99d3")
         ("STUB"   . "#1E90FF")
 	("XXX"    . "#FF4500")))
+
+;; random kbd changes
+(global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
+(global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
