@@ -3,6 +3,11 @@
 ;; loading new files just in case lol
 ;; (load-file "~/.emacs2")
 
+;; random kbd changes
+(autoload 'View-scroll-half-page-forward "view")
+(autoload 'View-scroll-half-page-backward "view")
+(global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
+(global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
 
 ;;Packages
 ;; im idiot
@@ -13,7 +18,7 @@
 (setq package-list '(yafolding org-superstar all-the-icons use-package lsp-mode
 			       beacon cherry-blossom-theme vterm clues-theme company company-quickhelp dashboard 
 			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground
-			       helpful highlight-indent-guides magit minibuffer-complete-cycle 
+			       helpful highlight-indent-guides magit minibuffer-complete-cycle free-keys
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons 
 			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp hl-todo
 			       slime slime-company lispy rtags quelpa simple-mpc helm-gtags function-args clang-format
@@ -53,7 +58,16 @@
 (fa-config-default)
 
 ;;Programming
+;; compiling
+(global-set-key (kbd "C-c M-c") 'compile)
+(setq compile-command "cd .. && meson build && ninja -C build && ./build/main") 
 
+;; lsp config
+(require 'lsp-mode)
+(setq lsp-enable-links nil)
+(global-set-key (kbd "C-c d") 'lsp-find-definition)
+(global-set-key (kbd "C-c z") 'lsp-find-declaration)
+;; 
 (global-display-line-numbers-mode)
 					;
 ;;common lisp
@@ -61,17 +75,17 @@
 (setq inferior-lisp-program (executable-find "sbcl"))
 (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
 
-;;C
 					;
-(require 'lsp-mode)
 (add-hook 'c-mode-hook #'lsp)
 (add-hook 'c++-mode-hook #'lsp)
-(setq lsp-enable-links nil)
 (add-hook 'c-mode-common-hook #'clang-format+-mode)
 
 ;;ORG MODE
-;; 
+;;
+(require 'org)
 (require 'org-superstar)
+(setq org-directory "~/Documents/programming/org")
+(setq org-default-notes-file (concat org-directory "/notes.org"))
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
 
 (let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
@@ -95,25 +109,40 @@
 
 (setq org-hide-emphasis-markers t)
 
-;TOC 
+;;TOC 
 (if (require 'toc-org nil t)
     (add-hook 'org-mode-hook 'toc-org-mode)
 
-    ;; enable in markdown, too
-    (add-hook 'markdown-mode-hook 'toc-org-mode)
-    (define-key markdown-mode-map (kbd "\C-c\C-o") 'toc-org-markdown-follow-thing-at-point)
+  ;; enable in markdown, too
+  (add-hook 'markdown-mode-hook 'toc-org-mode)
+  (define-key markdown-mode-map (kbd "\C-c\C-o") 'toc-org-markdown-follow-thing-at-point)
   (warn "toc-org not found"))
 
+;; todo capturing
+(require 'org)(setq org-capture-templates '(
+			       ("c"
+				"Code"
+				entry
+				(file+headline "must.org" "Code")
+				"* TODO %^{TITLE} %^G\n:PROPERTIES:\n:Created: %U:Source: %a\n:END:\n%i%?"
+				:prepend nil
+				:empty-lines 1
+				:create t
+				:kill-buffer t)
+			       )
+      )
+(global-set-key (kbd "C-c c") 'org-capture)
+
 ;;Random editing stuff
-; 
- ;; To disable shortcut "jump" indicators for each section, set
- ;; (setq dashboard-show-shortcuts nil)
- ;; (electric-pair-mode)
+					; 
+;; To disable shortcut "jump" indicators for each section, set
+(setq dashboard-show-shortcuts nil)
+(electric-pair-mode)
 (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
 (add-hook 'lisp-mode-hook 'enable-paredit-mode)
- ;; (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+(add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
 
-;; (setq electric-pair-delete-adjacent-pair nil)
+(setq electric-pair-delete-adjacent-pair nil)
 
 ;;Visual stuff
 					; 
@@ -195,7 +224,7 @@
 ;;rainbow delimiters
 ;
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-;; (add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
+(add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
 (show-paren-mode 1)
 
 ;;Global custom keybinds
@@ -232,18 +261,18 @@
 
 (require 'helm-gtags)
 ;; Enable helm-gtags-mode
-(add-hook 'dired-mode-hook 'helm-gtags-mode)
-(add-hook 'eshell-mode-hook 'helm-gtags-mode)
-(add-hook 'c-mode-hook 'helm-gtags-mode)
-(add-hook 'c++-mode-hook 'helm-gtags-mode)
-(add-hook 'asm-mode-hook 'helm-gtags-mode)
+;; (add-hook 'dired-mode-hook 'helm-gtags-mode)
+;; (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+;; (add-hook 'c-mode-hook 'helm-gtags-mode)
+;; (add-hook 'c++-mode-hook 'helm-gtags-mode)
+;; (add-hook 'asm-mode-hook 'helm-gtags-mode)
 
-(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+;; (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+;; (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
 (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
 (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+;; (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+;; (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
 
 
 (helm-mode 1)
@@ -281,6 +310,6 @@
         ("STUB"   . "#1E90FF")
 	("XXX"    . "#FF4500")))
 
-;; random kbd changes
-(global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
-(global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
+
+
+
