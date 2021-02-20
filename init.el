@@ -19,7 +19,7 @@
 			       beacon cherry-blossom-theme vterm clues-theme company company-quickhelp dashboard 
 			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground
 			       helpful highlight-indent-guides magit minibuffer-complete-cycle free-keys
-			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons 
+			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons nix-mode
 			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp hl-todo
 			       slime slime-company lispy rtags quelpa simple-mpc helm-gtags function-args clang-format
 			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile rainbow-identifiers))
@@ -67,6 +67,8 @@
 (setq lsp-enable-links nil)
 (global-set-key (kbd "C-c d") 'lsp-find-definition)
 (global-set-key (kbd "C-c z") 'lsp-find-declaration)
+(global-set-key (kbd "C-c h") 'ff-find-other-file)
+
 ;; 
 (global-display-line-numbers-mode)
 					;
@@ -311,5 +313,5 @@
 	("XXX"    . "#FF4500")))
 
 
-
-
+(require 'nix-mode)
+(add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))
