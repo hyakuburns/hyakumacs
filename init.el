@@ -22,12 +22,13 @@
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons nix-mode
 			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp hl-todo
 			       slime slime-company lispy rtags quelpa simple-mpc helm-gtags function-args clang-format
-			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile rainbow-identifiers))
+			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile rainbow-identifiers unicode-fonts))
 					; list the repositories containing them
 
 
 ;; activate all the packages (in particular autoloads)
 (package-initialize)
+
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -52,6 +53,9 @@
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
+
+;(require 'unicode-fonts)
+;(unicode-fonts-setup)
 
 ;; in line function arguments hint
 (require 'function-args)
