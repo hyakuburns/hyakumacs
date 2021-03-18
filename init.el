@@ -81,6 +81,7 @@
 (add-hook 'c-mode-hook #'lsp)
 (add-hook 'c++-mode-hook #'lsp)
 (add-hook 'c-mode-common-hook #'clang-format+-mode)
+(add-hook 'go-mode-hook 'lsp-deferred)
 
 ;;ORG MODE
 ;;

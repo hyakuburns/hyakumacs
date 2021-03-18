@@ -1,1 +1,2 @@
 * My emacs set up breh
+do ~touch custom.el~ before running emacs
