@@ -86,7 +86,7 @@
 (add-hook 'c++-mode-hook #'lsp)
 (add-hook 'c-mode-common-hook #'clang-format+-mode)
 (add-hook 'go-mode-hook 'lsp-deferred)
-(add-hook 'go-mode-hook 'gofmt-before-save)
+(add-hook 'before-save-hook 'gofmt-before-save)
 
 ;;ORG MODE
 ;;
@@ -321,3 +321,8 @@
 
 (require 'nix-mode)
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))
+;; set transparency
+ ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
+ ;;(set-frame-parameter (selected-frame) 'alpha <both>)
+(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
+(add-to-list 'default-frame-alist '(alpha . (85 . 50)))
