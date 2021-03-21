@@ -21,7 +21,7 @@
 			       helpful highlight-indent-guides magit minibuffer-complete-cycle free-keys
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons nix-mode
 			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp hl-todo
-			       slime slime-company lispy rtags quelpa simple-mpc helm-gtags function-args clang-format
+			       slime slime-company rtags quelpa simple-mpc helm-gtags function-args clang-format
 			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile rainbow-identifiers unicode-fonts))
 					; list the repositories containing them
 
@@ -45,6 +45,11 @@
 
 ;; helm
 (straight-use-package 'helm)
+;;mine
+(require 'generic-x)
+(straight-use-package
+ '(robo-mode :type git :host github :repo "hyakuburns/robodep.el"))
+(require 'robodep.el)
 ;;fetch the list of packages available 
 (unless package-archive-contents
   (package-refresh-contents))
@@ -79,7 +84,6 @@
 ;;common lisp
 (slime-setup '(slime-fancy slime-quicklisp slime-asdf slime-company))
 (setq inferior-lisp-program (executable-find "sbcl"))
-(add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))
 
 					;
 (add-hook 'c-mode-hook #'lsp)
@@ -326,3 +330,4 @@
  ;;(set-frame-parameter (selected-frame) 'alpha <both>)
 (set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 (add-to-list 'default-frame-alist '(alpha . (85 . 50)))
+
