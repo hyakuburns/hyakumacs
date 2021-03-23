@@ -21,7 +21,7 @@
 			       helpful highlight-indent-guides magit minibuffer-complete-cycle free-keys
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons nix-mode
 			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp hl-todo
-			       slime slime-company rtags quelpa simple-mpc helm-gtags function-args clang-format
+			       slime slime-company rtags quelpa simple-mpc helm-gtags function-args clang-format highlight-escape-sequences
 			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile rainbow-identifiers unicode-fonts))
 					; list the repositories containing them
 
@@ -144,6 +144,10 @@
 			       )
       )
 (global-set-key (kbd "C-c c") 'org-capture)
+;; highlight escape sequences
+(put 'hes-escape-backslash-face 'face-alias 'font-lock-builtin-face)
+(put 'hes-escape-sequence-face 'face-alias 'font-lock-builtin-face)
+
 
 ;;Random editing stuff
 					; 
@@ -331,3 +335,23 @@
 (set-frame-parameter (selected-frame) 'alpha '(85 . 50))
 (add-to-list 'default-frame-alist '(alpha . (85 . 50)))
 
+;;slime syntax highlighting
+(defvar slime-repl-font-lock-keywords lisp-font-lock-keywords-2)
+(defun slime-repl-font-lock-setup ()
+  (setq font-lock-defaults
+        '(slime-repl-font-lock-keywords
+         ;; From lisp-mode.el
+         nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil
+         (font-lock-syntactic-face-function
+         . lisp-font-lock-syntactic-face-function))))
+
+(add-hook 'slime-repl-mode-hook 'slime-repl-font-lock-setup)
+
+(defadvice slime-repl-insert-prompt (after font-lock-face activate)
+  (let ((inhibit-read-only t))
+    (add-text-properties
+     slime-repl-prompt-start-mark (point)
+     '(font-lock-face
+      slime-repl-prompt-face
+      rear-nonsticky
+      (slime-repl-prompt read-only font-lock-face intangible)))))
