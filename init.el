@@ -80,7 +80,11 @@
 
 ;; 
 (global-display-line-numbers-mode)
-					;
+
+;;geiser
+(setq geiser-active-implementations '(guile))
+(require 'geiser)
+
 ;;common lisp
 (slime-setup '(slime-fancy slime-quicklisp slime-asdf slime-company))
 (setq inferior-lisp-program (executable-find "sbcl"))
@@ -246,6 +250,7 @@
 ;;Global custom keybinds
 
 (global-set-key (kbd "C-x p") 'move-to-window-line-top-bottom)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 ;backups
 (setq backup-directory-alist
