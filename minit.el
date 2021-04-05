@@ -234,17 +234,6 @@
 ;function peek
 (require 'function-args)
 
-;; todo highlighting
-(global-hl-todo-mode)
-(setq hl-todo-keyword-faces
-      '(("TODO"   . "#FF0000")
-        ("FIXME"  . "#FF0000")
-        ("DEBUG"  . "#A020F0")
-        ("GOTCHA" . "#ff99d3")
-        ("STUB"   . "#1E90FF")
-	("XXX"    . "#FF4500")))
-
-
 (require 'nix-mode)
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))
 ;; set transparency
