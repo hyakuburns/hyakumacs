@@ -1,3 +1,5 @@
+(if (file-exists-p "~/.emacs.d/custom.el") nil
+  (write-region "" nil "~/.emacs.d/custom.el"))
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 ;; loading new files just in case lol
@@ -43,13 +45,6 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; helm
-(straight-use-package 'helm)
-;;mine
-(require 'generic-x)
-(straight-use-package
- '(robo-mode :type git :host github :repo "hyakuburns/robodep.el"))
-(require 'robodep.el)
 ;;fetch the list of packages available 
 (unless package-archive-contents
   (package-refresh-contents))
@@ -58,9 +53,6 @@
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
-
-;(require 'unicode-fonts)
-;(unicode-fonts-setup)
 
 ;; in line function arguments hint
 (require 'function-args)
@@ -104,25 +96,6 @@
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
 
-(let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-                             ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                             ((x-list-fonts "Verdana")         '(:font "Verdana"))
-                             ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-                             (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-       (base-font-color     (face-foreground 'default nil 'default))
-       (headline           `(:inherit default :weight bold :foreground "white")))
-
-  (custom-theme-set-faces 'user
-                          `(org-level-8 ((t (,@headline ,@variable-tuple))))
-                          `(org-level-7 ((t (,@headline ,@variable-tuple))))
-                          `(org-level-6 ((t (,@headline ,@variable-tuple))))
-                          `(org-level-5 ((t (,@headline ,@variable-tuple))))
-                          `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-                          `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-                          `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-                          `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
-                          `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
-
 (setq org-hide-emphasis-markers t)
 
 ;;TOC 
@@ -165,41 +138,12 @@
 (setq electric-pair-delete-adjacent-pair nil)
 
 ;;Visual stuff
-					; 
-(load-theme 'doom-challenger-deep t)
 (normal-erase-is-backspace-mode 1)
-;;Dashboard
-;; 
-(require 'dashboard)
-(dashboard-setup-startup-hook)
-(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-;; Set the title
-(setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
-;; Set the banner
-(setq dashboard-startup-banner "~/.emacs.d/epics/satanichia.png")
-;; Value can be
-;; 'official which displays the official emacs logo
-;; 'logo which displays an alternative emacs logo
-;; 1, 2 or 3 which displays one of the text banners
-;; "path/to/your/image.png" which displays whatever image you would prefer
-
-;; Content is not centered by default. To center, set
-(setq dashboard-center-content t)
-(beacon-mode 1)
 
 ;;doom modeline 
 ;; 
 (require 'doom-modeline)
 (doom-modeline-mode 1)
-
-;;treemacs
-;
-(require 'treemacs-all-the-icons)
-(treemacs-load-theme "all-the-icons")
-
-;;emojify
-;; 
-(add-hook 'after-init-hook #'global-emojify-mode)
 
 ;;indentantion
 ;; 
@@ -241,16 +185,11 @@
 (add-hook 'prog-mode-hook
           (lambda () (yafolding-mode)))
 
-;;rainbow delimiters
-;
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-(add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
 (show-paren-mode 1)
 
 ;;Global custom keybinds
 
 (global-set-key (kbd "C-x p") 'move-to-window-line-top-bottom)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-:") 'avy-goto-char)
 
 
@@ -260,50 +199,11 @@
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
-;; (setq ido-enable-flex-matching t)
-;; (ido-mode 1)
-(require 'helm)
-(require 'helm-config)
-
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "C-c b") 'helm-occur)
-(global-set-key (kbd "C-x b") 'helm-mini)
-
-(helm-autoresize-mode 1)
-(setq helm-autoresize-max-height 30)
-(setq helm-M-x-fuzzy-match t)
-
-(setq
- helm-gtags-ignore-case t
- helm-gtags-auto-update t
- helm-gtags-use-input-at-cursor t
- helm-gtags-pulse-at-cursor t
- helm-gtags-prefix-key "\C-cg"
- helm-gtags-suggested-key-mapping t
- )
-
-(require 'helm-gtags)
-;; Enable helm-gtags-mode
-;; (add-hook 'dired-mode-hook 'helm-gtags-mode)
-;; (add-hook 'eshell-mode-hook 'helm-gtags-mode)
-;; (add-hook 'c-mode-hook 'helm-gtags-mode)
-;; (add-hook 'c++-mode-hook 'helm-gtags-mode)
-;; (add-hook 'asm-mode-hook 'helm-gtags-mode)
-
-;; (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-;; (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-;; (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-;; (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
-
-
-(helm-mode 1)
+(ido-mode 1)
+(setq ido-enable-flex-matching t)
 
 (require 'projectile)
 (projectile-global-mode)
-(setq projectile-completion-system 'helm)
-(helm-projectile-on)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (projectile-mode +1)
@@ -324,23 +224,9 @@
 (require 'function-args)
 
 ;; todo highlighting
-(global-hl-todo-mode)
-(setq hl-todo-keyword-faces
-      '(("TODO"   . "#FF0000")
-        ("FIXME"  . "#FF0000")
-        ("DEBUG"  . "#A020F0")
-        ("GOTCHA" . "#ff99d3")
-        ("STUB"   . "#1E90FF")
-	("XXX"    . "#FF4500")))
-
 
 (require 'nix-mode)
 (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode))
-;; set transparency
- ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
- ;;(set-frame-parameter (selected-frame) 'alpha <both>)
-(set-frame-parameter (selected-frame) 'alpha '(85 . 50))
-(add-to-list 'default-frame-alist '(alpha . (85 . 50)))
 
 ;;slime syntax highlighting
 (defvar slime-repl-font-lock-keywords lisp-font-lock-keywords-2)
@@ -362,3 +248,6 @@
       slime-repl-prompt-face
       rear-nonsticky
       (slime-repl-prompt read-only font-lock-face intangible)))))
+
+(when window-system
+  (load "~/.emacs.d/gui.el"))
