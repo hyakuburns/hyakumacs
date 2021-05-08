@@ -19,6 +19,7 @@
 ;; list the packages you want
 (setq package-list '(yafolding org-superstar all-the-icons use-package lsp-mode avy monky
 			       beacon cherry-blossom-theme vterm clues-theme company company-quickhelp dashboard geiser
+             god-mode rainbow-mode 
 			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground
 			       helpful highlight-indent-guides magit minibuffer-complete-cycle free-keys
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons nix-mode
@@ -83,6 +84,7 @@
 
 					;
 (add-hook 'c-mode-hook #'lsp)
+(add-hook 'c-mode-hook 'outshine-mode)
 (add-hook 'c++-mode-hook #'lsp)
 (add-hook 'c-mode-common-hook #'clang-format+-mode)
 (add-hook 'go-mode-hook 'lsp-deferred)
@@ -138,7 +140,7 @@
 (setq electric-pair-delete-adjacent-pair nil)
 
 ;;Visual stuff
-(normal-erase-is-backspace-mode 1)
+(normal-erase-is-backspace-mode 0)
 
 ;;doom modeline 
 ;; 

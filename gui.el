@@ -2,6 +2,7 @@
 ;; helm
 (straight-use-package 'helm)
 
+(require 'rainbow-mode)
 ;;Org mode++
 (let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
                              ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
@@ -23,6 +24,9 @@
                           `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
 
 (load-theme 'doom-challenger-deep t)
+
+(normal-erase-is-backspace-mode 1)
+
 
 ;;Dashboard
 ;; 
@@ -167,3 +171,30 @@
 (set-frame-parameter (selected-frame) 'alpha '(95 . 50))
 (add-to-list 'default-frame-alist '(alpha . (95 . 50)))
 
+;;;;;GOD MODEEEEE
+(require 'god-mode)
+(god-mode)
+(global-set-key (kbd "<escape>") #'god-local-mode)
+;;visual indicator
+(defun my-god-mode-update-cursor-type ()
+  (setq cursor-type (if (or god-local-mode buffer-read-only) 'box 'bar)))
+(add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
+
+(defun my-god-mode-update-mode-line ()
+  (cond
+   (god-local-mode
+    (set-face-attribute 'mode-line nil
+                        :foreground "#d7d7d7"
+                        :background "#28156E")
+    (set-face-attribute 'mode-line-inactive nil
+                        :foreground "#000000"
+                        :background "#d7d7d7"))
+   (t
+    (set-face-attribute 'mode-line nil
+			:foreground "#0a0a0a"
+			:background "#7c318f")
+    (set-face-attribute 'mode-line-inactive nil
+			:foreground "#404148"
+			:background "#efefef"))))
+
+(add-hook 'post-command-hook 'my-god-mode-update-mode-line)
