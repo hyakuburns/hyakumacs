@@ -19,13 +19,13 @@
 ;; list the packages you want
 (setq package-list '(yafolding org-superstar all-the-icons use-package lsp-mode avy monky
 			       beacon cherry-blossom-theme vterm clues-theme company company-quickhelp dashboard geiser
-             god-mode rainbow-mode 
+             god-mode rainbow-mode undo-tree 
 			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground
 			       helpful highlight-indent-guides magit minibuffer-complete-cycle free-keys
-			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons nix-mode
+			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons nix-mode lua-mode
 			       treemacs-magit rainbow-delimiters toc-org flycheck lsp-treemacs helm-lsp hl-todo
 			       slime slime-company quelpa simple-mpc helm-gtags function-args clang-format highlight-escape-sequences
-			       clang-format+ quelpa git-commit magit-popup meson-mode helm-projectile rainbow-identifiers unicode-fonts))
+			       clang-format+ quelpa git-commit magit-popup meson-mode ccls helm-projectile rainbow-identifiers unicode-fonts))
 					; list the repositories containing them
 
 
@@ -82,14 +82,14 @@
 (slime-setup '(slime-fancy slime-quicklisp slime-asdf slime-company))
 (setq inferior-lisp-program (executable-find "sbcl"))
 
-					;
+;;mode shit
 (add-hook 'c-mode-hook #'lsp)
-(add-hook 'c-mode-hook 'outshine-mode)
 (add-hook 'c++-mode-hook #'lsp)
 (add-hook 'c-mode-common-hook #'clang-format+-mode)
 (add-hook 'go-mode-hook 'lsp-deferred)
 (add-hook 'before-save-hook 'gofmt-before-save)
-
+;(add-hook 'c-mode-hook 'outshine-mode)
+(require 'ccls)
 ;;ORG MODE
 ;;
 (require 'org)
@@ -251,5 +251,7 @@
       rear-nonsticky
       (slime-repl-prompt read-only font-lock-face intangible)))))
 
+;;undo tree
+(global-undo-tree-mode)
 (when window-system
   (load "~/.emacs.d/gui.el"))
