@@ -1,2 +1,2 @@
 * My emacs set up breh
-do ~touch custom.el~ before running emacs
+just do clone github.com/hyakuburns/hyakumacs ~/.emacs.d/ and ur set cuz
