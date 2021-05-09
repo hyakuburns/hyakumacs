@@ -123,6 +123,7 @@
 			       )
       )
 (global-set-key (kbd "C-c c") 'org-capture)
+(require 'ox-md)
 ;; highlight escape sequences
 (put 'hes-escape-backslash-face 'face-alias 'font-lock-builtin-face)
 (put 'hes-escape-sequence-face 'face-alias 'font-lock-builtin-face)
