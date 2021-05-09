@@ -187,14 +187,14 @@
                         :foreground "#d7d7d7"
                         :background "#28156E")
     (set-face-attribute 'mode-line-inactive nil
-                        :foreground "#000000"
-                        :background "#d7d7d7"))
+                        :foreground "#efefef"
+                        :background "#404148"))
    (t
     (set-face-attribute 'mode-line nil
 			:foreground "#0a0a0a"
 			:background "#7c318f")
     (set-face-attribute 'mode-line-inactive nil
-			:foreground "#404148"
-			:background "#efefef"))))
+			:foreground "#efefef"
+			:background "#404148"))))
 
 (add-hook 'post-command-hook 'my-god-mode-update-mode-line)
