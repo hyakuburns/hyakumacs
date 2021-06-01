@@ -171,30 +171,20 @@
 (set-frame-parameter (selected-frame) 'alpha '(95 . 50))
 (add-to-list 'default-frame-alist '(alpha . (95 . 50)))
 
-;;;;;GOD MODEEEEE
-(require 'god-mode)
-(god-mode)
-(global-set-key (kbd "<escape>") #'god-local-mode)
-;;visual indicator
-(defun my-god-mode-update-cursor-type ()
-  (setq cursor-type (if (or god-local-mode buffer-read-only) 'box 'bar)))
-(add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
-
-(defun my-god-mode-update-mode-line ()
-  (cond
-   (god-local-mode
-    (set-face-attribute 'mode-line nil
-                        :foreground "#d7d7d7"
-                        :background "#28156E")
-    (set-face-attribute 'mode-line-inactive nil
-                        :foreground "#efefef"
-                        :background "#404148"))
-   (t
-    (set-face-attribute 'mode-line nil
-			:foreground "#0a0a0a"
-			:background "#7c318f")
-    (set-face-attribute 'mode-line-inactive nil
-			:foreground "#efefef"
-			:background "#404148"))))
-
-(add-hook 'post-command-hook 'my-god-mode-update-mode-line)
+;; Enable Evil
+(require 'evil)
+(evil-mode 1)
+;; Vim key bindings
+(require 'evil-leader)
+(global-evil-leader-mode)
+(evil-leader/set-key
+  "ci" 'evilnc-comment-or-uncomment-lines
+  "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
+  "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
+  "cc" 'evilnc-copy-and-comment-lines
+  "cp" 'evilnc-comment-or-uncomment-paragraphs
+  "cr" 'comment-or-uncomment-region
+  "cv" 'evilnc-toggle-invert-comment-line-by-line
+  "."  'evilnc-copy-and-comment-operator
+  "\\" 'evilnc-comment-operator ; if you prefer backslash key
+)

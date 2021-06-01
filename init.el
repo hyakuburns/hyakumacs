@@ -19,7 +19,7 @@
 ;; list the packages you want
 (setq package-list '(yafolding org-superstar all-the-icons use-package lsp-mode avy monky
 			       beacon cherry-blossom-theme vterm clues-theme company company-quickhelp dashboard geiser
-			       god-mode rainbow-mode undo-tree 
+			       evil evil-leader evil-nerd-commenter rainbow-mode undo-tree 
 			       doom-modeline doom-themes emojify emojify-logos go-mode go-playground
 			       helpful highlight-indent-guides magit minibuffer-complete-cycle free-keys
 			       paredit paredit-everywhere projectile treemacs treemacs-all-the-icons nix-mode lua-mode zig-mode
